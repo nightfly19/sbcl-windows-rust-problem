@@ -1,0 +1,25 @@
+//extern int initialize_lisp(int argc, const char *argv[], char *envp[];)
+//       int initialize_lisp(int argc, char *argv[], char *envp[])
+
+use std::ffi::{CString, c_char};
+
+fn call_dynamic() -> Result<u32, Box<dyn std::error::Error>> {
+    let args = [CString::new("--core").expect(""),
+                CString::new("C:/Users/sage/hello_world/lisp.lib").expect(""),
+    ];
+    println!("{:?}", args);
+    let args_c = args.map(|a| a.as_ptr());
+    args_c.len();
+    //args_c.as_ptr();
+    unsafe {
+        let lib = libloading::Library::new("C:/Users/sage/hello_world/libsbcl.dll")?;
+        let func: libloading::Symbol<unsafe extern fn(argc: i32, argv: *const *const i8) -> u32> = lib.get(b"initialize_lisp")?;
+        //Ok(func(0 as i32, std::ptr::null()))
+        Ok(func(args_c.len() as i32, args_c.as_ptr()))
+    }
+}
+
+fn main() {
+    call_dynamic().unwrap();
+    //println!("Result: {}", );
+}
