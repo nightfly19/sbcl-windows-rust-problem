@@ -3,17 +3,29 @@
 
 use std::ffi::{CString, c_char};
 
+#[no_mangle]
+pub static mut fuckoff: *mut std::ffi::c_void = 0 as *mut std::ffi::c_void;
+
 fn call_dynamic() -> Result<u32, Box<dyn std::error::Error>> {
     let args = [
         CString::new("sbcl").expect(""),
         CString::new("--core").expect(""),
         CString::new("C:\\Users\\sage\\hello_world\\lisp.lib").expect(""),
+        CString::new("--disable-signal-handlers").expect(""),
+        CString::new("--no-sysinit").expect(""),
+        CString::new("--no-userinit").expect(""),
+        CString::new("--disable-debugger").expect(""),
+        
     ];
     println!("{:?}", args);
-    let mut args_c: [*const i8;4] = [std::ptr::null(); 4];
+    let mut args_c: [*const i8;8] = [std::ptr::null(); 8];
     args_c[0] = args[0].as_ptr();
     args_c[1] = args[1].as_ptr();
     args_c[2] = args[2].as_ptr();
+    args_c[3] = args[3].as_ptr();
+    args_c[4] = args[4].as_ptr();
+    args_c[5] = args[5].as_ptr();
+    args_c[6] = args[6].as_ptr();
     //args_c.as_ptr();
     unsafe {
         let lib = libloading::Library::new("C:\\Users\\sage\\hello_world\\libsbcl.dll")?;
