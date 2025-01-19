@@ -3,18 +3,33 @@
 
 use std::ffi::{CString, c_char};
 
+//#[link(name = "c")]
+//#[no_mangle]
+//pub extern "C" fn trunc(x: f64) -> f64 {
+//    0.0
+//}
+
+extern "C" {
+    pub static mut fuckoff: u64;
+
+    pub static mut FUCKOFF: u64;
+}
+
 #[no_mangle]
-pub static mut fuckoff: *mut std::ffi::c_void = 0 as *mut std::ffi::c_void;
+pub extern "C" fn whyyyy() {
+    println!("WHY IS THIS SO HARD");
+}
 
 fn call_dynamic() -> Result<u32, Box<dyn std::error::Error>> {
     let args = [
         CString::new("sbcl").expect(""),
         CString::new("--core").expect(""),
         CString::new("C:\\Users\\sage\\hello_world\\lisp.lib").expect(""),
+        //CString::new("C:\\Users\\sage\\hello_world\\sbcl.core").expect(""),
         CString::new("--disable-signal-handlers").expect(""),
         CString::new("--no-sysinit").expect(""),
         CString::new("--no-userinit").expect(""),
-        CString::new("--disable-debugger").expect(""),
+        //CString::new("--disable-debugger").expect(""),
         
     ];
     println!("{:?}", args);
@@ -25,7 +40,7 @@ fn call_dynamic() -> Result<u32, Box<dyn std::error::Error>> {
     args_c[3] = args[3].as_ptr();
     args_c[4] = args[4].as_ptr();
     args_c[5] = args[5].as_ptr();
-    args_c[6] = args[6].as_ptr();
+    //args_c[6] = args[6].as_ptr();
     //args_c.as_ptr();
     unsafe {
         let lib = libloading::Library::new("C:\\Users\\sage\\hello_world\\libsbcl.dll")?;

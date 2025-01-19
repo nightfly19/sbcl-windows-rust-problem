@@ -1,0 +1,19 @@
+.PHONY:
+	all
+	rust
+	rtest
+
+all: thing rust lisp.lib
+
+lisp.lib: as_lib.lisp Makefile
+	./sbcl/sbcl --script as_lib.lisp
+
+thing: thing.c Makefile
+	gcc thing.c -rdynamic -o thing
+	#gcc thing.c -o thing
+
+rust:
+	cd host_test && cargo build
+
+rtest:
+	./host_test/target/debug/host_test
