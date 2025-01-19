@@ -26,7 +26,7 @@ fn call_dynamic() -> Result<u32, Box<dyn std::error::Error>> {
     args_c[5] = args[5].as_ptr();
     unsafe {
         let lib = libloading::Library::new("sbcl\\libsbcl.dll")?;
-        let func: libloading::Symbol<unsafe extern fn(argc: i32, argv: *const *const i8, envp: *const *const i8 ) -> u32> = lib.get(b"initialize_lisp")?;
+        let func: libloading::Symbol<unsafe extern "C" fn(argc: i32, argv: *const *const i8, envp: *const *const i8 ) -> u32> = lib.get(b"initialize_lisp")?;
         println!("Moocow: {:?}", MOOCOW);
         println!("Initing lisp");
         func(args.len() as i32, args_c.as_ptr(), std::ptr::null());
