@@ -3,34 +3,18 @@
 
 use std::ffi::{CString, c_char};
 
-//#[link(name = "c")]
-//#[no_mangle]
-//pub extern "C" fn trunc(x: f64) -> f64 {
-//    0.0
-//}
-
-extern "C" {
-    pub static mut fuckoff: u64;
-
-    pub static mut FUCKOFF: u64;
-}
-
-#[no_mangle]
-pub extern "C" fn whyyyy() {
-    println!("WHY IS THIS SO HARD");
-}
+#[export_name = "moocow"]
+pub static mut MOOCOW: Option<fn() -> i64> = None;
 
 fn call_dynamic() -> Result<u32, Box<dyn std::error::Error>> {
     let args = [
         CString::new("sbcl").expect(""),
         CString::new("--core").expect(""),
-        CString::new("C:\\Users\\sage\\hello_world\\lisp.lib").expect(""),
-        //CString::new("C:\\Users\\sage\\hello_world\\sbcl.core").expect(""),
+        CString::new("lisp.lib").expect(""),
         CString::new("--disable-signal-handlers").expect(""),
         CString::new("--no-sysinit").expect(""),
         CString::new("--no-userinit").expect(""),
         //CString::new("--disable-debugger").expect(""),
-        
     ];
     println!("{:?}", args);
     let mut args_c: [*const i8;8] = [std::ptr::null(); 8];
@@ -40,15 +24,17 @@ fn call_dynamic() -> Result<u32, Box<dyn std::error::Error>> {
     args_c[3] = args[3].as_ptr();
     args_c[4] = args[4].as_ptr();
     args_c[5] = args[5].as_ptr();
-    //args_c[6] = args[6].as_ptr();
-    //args_c.as_ptr();
     unsafe {
-        let lib = libloading::Library::new("C:\\Users\\sage\\hello_world\\libsbcl.dll")?;
+        let lib = libloading::Library::new("sbcl\\libsbcl.dll")?;
         let func: libloading::Symbol<unsafe extern fn(argc: i32, argv: *const *const i8, envp: *const *const i8 ) -> u32> = lib.get(b"initialize_lisp")?;
-        //Ok(func(0 as i32, std::ptr::null()))
-        //println!("{:?}", args_c);
-        //println!("{:?}", args[0]);
-        Ok(func(args_c.len() as i32, args_c.as_ptr(), std::ptr::null()))
+        println!("Moocow: {:?}", MOOCOW);
+        println!("Initing lisp");
+        func(args.len() as i32, args_c.as_ptr(), std::ptr::null());
+        println!("Inited lisp");
+        println!("Moocow: {:?}", MOOCOW);
+        let val = MOOCOW.unwrap()();
+        println!("Cow result: {}", val);
+        Ok(0)
     }
 }
 
