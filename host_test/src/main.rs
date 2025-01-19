@@ -32,8 +32,9 @@ fn call_dynamic() -> Result<u32, Box<dyn std::error::Error>> {
         func(args.len() as i32, args_c.as_ptr(), std::ptr::null());
         println!("Inited lisp");
         println!("Moocow: {:?}", MOOCOW);
-        let val = MOOCOW.unwrap()();
-        println!("Cow result: {}", val);
+        let func: libloading::Symbol<unsafe extern "C" fn(argc: i32, argv: *const *const i8, envp: *const *const i8 ) -> u32> = lib.get(b"initialize_lisp")?;
+        //let val = MOOCOW.unwrap()();
+        //println!("Cow result: {}", val);
         Ok(0)
     }
 }
